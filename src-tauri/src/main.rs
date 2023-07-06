@@ -1,6 +1,6 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-use tauri::{CustomMenuItem, Menu, MenuItem, PhysicalSize, Size, Submenu};
+use tauri::{api, CustomMenuItem, LogicalSize, Manager, Menu, MenuItem, Size, Submenu};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -43,16 +43,16 @@ fn main() {
             }
             "smallsize" => event
                 .window()
-                .set_size(Size::Physical(PhysicalSize {
-                    width: 450,
-                    height: 700,
+                .set_size(Size::Logical(LogicalSize {
+                    width: 450.0,
+                    height: 700.0,
                 }))
                 .unwrap(),
             "normalsize" => event
                 .window()
-                .set_size(Size::Physical(PhysicalSize {
-                    width: 800,
-                    height: 800,
+                .set_size(Size::Logical(LogicalSize {
+                    width: 800.0,
+                    height: 800.0,
                 }))
                 .unwrap(),
             "home" => {
@@ -65,7 +65,14 @@ fn main() {
                     .window()
                     .eval("window.location.href='https://weread.qq.com/web/shelf'");
             }
-            "about" => {}
+            "about" => {
+                api::shell::open(
+                    &event.window().shell_scope(),
+                    "https://github.com/jiangfei5945/weread-app".to_string(),
+                    None,
+                )
+                .unwrap();
+            }
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![greet])
